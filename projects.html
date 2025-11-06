@@ -7,6 +7,25 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body v-scope>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">{{ data.name }}</a>
+      <div class="d-flex align-items-center">
+        <a href="projects.html" class="nav-link px-2">Projects</a>
+        <a href="work.html" class="nav-link px-2">Experience</a>
+        <a href="blog.html" class="nav-link px-2 active">Blog</a>
+        <a href="contact.html" class="nav-link px-2">Contact</a>
+        <button
+          class="btn ms-2"
+          @click="toggleTheme"
+          :class="theme === 'dark' ? 'btn-outline-light' : 'btn-outline-dark'"
+        >
+          <i :class="theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon'"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
   <div class="container my-5">
     <h1 class="mb-4">Projects</h1>
     <div class="row g-4">
@@ -30,5 +49,25 @@
     data: window.App
   }).mount();
   </script>
+  <script type="module">
+  import { createApp } from "https://unpkg.com/petite-vue?module";
+  fetch("navbar.html")
+    .then((r) => r.text())
+    .then((html) => {
+      document.querySelector("#navbar-placeholder").innerHTML = html;
+      createApp({
+        data: window.App,
+        theme: localStorage.getItem("theme") || "light",
+        toggleTheme() {
+          this.theme = this.theme === "light" ? "dark" : "light";
+          localStorage.setItem("theme", this.theme);
+          document.documentElement.setAttribute("data-bs-theme", this.theme);
+        },
+        mounted() {
+          document.documentElement.setAttribute("data-bs-theme", this.theme);
+        },
+      }).mount();
+    });
+</script>
 </body>
 </html>
