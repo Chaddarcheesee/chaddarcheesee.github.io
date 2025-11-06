@@ -35,22 +35,24 @@
       <p>Email: <a :href="'mailto:' + email">{{ email }}</a></p>
 
       <form
-  action="https://formspree.io/f/xkgpdzny"
-  method="POST"
-  class="mx-auto mt-4"
-  style="max-width: 500px"
->
-  <div class="mb-3">
-    <input type="text" name="name" class="form-control" placeholder="Your Name" required />
-  </div>
-  <div class="mb-3">
-    <input type="email" name="_replyto" class="form-control" placeholder="Your Email" required />
-  </div>
-  <div class="mb-3">
-    <textarea name="message" class="form-control" placeholder="Message" rows="4" required></textarea>
-  </div>
-  <button type="submit" class="btn btn-primary w-100">Send</button>
-</form>
+        action="https://formspree.io/f/xkgpdzny"
+        method="POST"
+        class="mx-auto mt-4"
+        style="max-width: 500px"
+      >
+      <input type="hidden" name="_redirect" value="https://chaddarcheesee.github.io/index.html" />
+
+      <div class="mb-3">
+        <input type="text" name="name" class="form-control" placeholder="Your Name" required />
+      </div>
+      <div class="mb-3">
+        <input type="email" name="_replyto" class="form-control" placeholder="Your Email" required />
+      </div>
+      <div class="mb-3">
+        <textarea name="message" class="form-control" placeholder="Message" rows="4" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Send</button>
+      </form>
     </section>
 
     <footer>© {{ new Date().getFullYear() }} {{ name }}</footer>

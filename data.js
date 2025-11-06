@@ -1,6 +1,6 @@
 window.App = {
   name: "ChaddarCheese",
-  tagline: "Embedded Developer | Web Creator | Maker",
+  tagline: "Embedded Developer | Maker",
   profilePic: "https://via.placeholder.com/120",
   about:
     "I'm a developer passionate about hardware-integrated systems. I specialize in ESP32, STM32, and automation tools.",
