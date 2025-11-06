@@ -34,7 +34,7 @@ window.App = {
 
   // 👇 Projects
   projects: [
-    /*
+    
     {
       title: "ESP32 Block IDE",
       description:
@@ -54,6 +54,6 @@ window.App = {
       description: "A custom physics-based game engine built from scratch.",
       image: "https://via.placeholder.com/400x200",
       link: "#",
-    },*/
+    },
   ],
 };
