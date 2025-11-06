@@ -1,18 +1,5 @@
-body {
-  transition: background-color 0.3s, color 0.3s;
-  font-family: "Inter", system-ui, sans-serif;
-}
-section {
-  padding: 4rem 0;
-}
-h1, h2, h3, h4 {
-  font-weight: 600;
-}
-.navbar {
-  margin-bottom: 2rem;
-}
-footer {
-  margin-top: 5rem;
-  padding: 2rem 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
+/* style.css */
+body { transition: background-color .25s, color .25s; }
+.hero { padding: 100px 0; text-align:center; }
+.card-img-top { object-fit: cover; height: 200px; }
+.fixed-top + .container, .fixed-top + header, .fixed-top + section { padding-top: 70px; }
