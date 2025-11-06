@@ -4,7 +4,7 @@ window.App = {
   profilePic: "https://via.placeholder.com/120",
   about:
     "I'm a developer passionate about hardware-integrated systems. I specialize in ESP32, STM32, and automation tools.",
-  email: "you@example.com",
+  email: "lhariwong@gmail.com",
 
   // 👇 Work Experience section
   experiences: [
