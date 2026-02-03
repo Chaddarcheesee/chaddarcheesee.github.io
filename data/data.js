@@ -23,11 +23,5 @@ window.App = {
       image: "https://via.placeholder.com/800x450",
       link: "./burgerstalltycoon.html",
     },
-    {
-      title: "Smart Train System",
-      description: "Automated LEGO train system using Raspberry Pi & ESP32.",
-      image: "https://via.placeholder.com/800x450",
-      link: "#",
-    },
   ],
 };
