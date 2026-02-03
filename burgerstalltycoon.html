@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍔 Burger Stall Tycoon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --secondary: #FFD23F;
+            --accent: #06FFA5;
+            --dark: #2A1E5C;
+            --light: #FFF9E6;
+            --success: #06FFA5;
+            --danger: #FF3E6C;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #FF6B35 0%, #FFD23F 50%, #06FFA5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 255, 255, 0.03) 0px,
+                    transparent 1px,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.03) 3px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            width: 100%;
+            background: var(--light);
+            border-radius: 32px;
+            box-shadow: 
+                0 20px 60px rgba(42, 30, 92, 0.3),
+                0 0 0 8px rgba(255, 255, 255, 0.2),
+                inset 0 -2px 20px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 12px;
+            text-shadow: 3px 3px 0 var(--secondary);
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            flex: 1;
+            min-width: 140px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 3px solid var(--dark);
+            transition: transform 0.2s;
+        }
+
+        .stat:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--dark);
+            opacity: 0.7;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Fredoka', sans-serif;
+            margin-top: 4px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 3px solid var(--dark);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .menu-item {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFF 100%);
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid var(--dark);
+            transition: all 0.3s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.2);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .item-icon {
+            font-size: 2rem;
+        }
+
+        .price-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .price-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #d45529;
+        }
+
+        .price-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #d45529;
+        }
+
+        .price-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #d45529;
+        }
+
+        .price-display {
+            flex: 1;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            color: var(--primary);
+            background: white;
+            padding: 8px;
+            border-radius: 10px;
+            border: 2px solid var(--dark);
+        }
+
+        .ingredients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .ingredient {
+            background: linear-gradient(135deg, #FFD23F 0%, #FFF 100%);
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid var(--dark);
+            text-align: center;
+        }
+
+        .ingredient-name {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .ingredient-amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            color: var(--primary);
+        }
+
+        .ingredient-cost {
+            font-size: 0.85rem;
+            color: var(--dark);
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            background: var(--accent);
+            border: 2px solid var(--dark);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 3px 0 #05d68a;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #05d68a;
+        }
+
+        .buy-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 0 #05d68a;
+        }
+
+        .customers {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            min-height: 80px;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #E8F5FF 0%, #FFF 100%);
+            border-radius: 16px;
+            border: 2px dashed var(--dark);
+        }
+
+        .customer {
+            font-size: 3rem;
+            animation: customerBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+        }
+
+        @keyframes customerBounce {
+            from {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 0 #d45529;
+            border: 3px solid var(--dark);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0 #d45529;
+        }
+
+        .action-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 0 #d45529;
+        }
+
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: 0 6px 0 #999;
+        }
+
+        .day-report {
+            background: linear-gradient(135deg, var(--accent) 0%, #05d68a 100%);
+            padding: 24px;
+            border-radius: 20px;
+            border: 3px solid var(--dark);
+            margin-bottom: 20px;
+            color: var(--dark);
+            animation: reportSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes reportSlide {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .report-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+        }
+
+        .report-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .report-line.total {
+            border-top: 3px solid var(--dark);
+            margin-top: 12px;
+            padding-top: 12px;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .upgrade-card {
+            background: linear-gradient(135deg, #E8E4FF 0%, #FFF 100%);
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid var(--dark);
+            transition: all 0.3s;
+        }
+
+        .upgrade-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(106, 90, 205, 0.2);
+        }
+
+        .upgrade-card.owned {
+            background: linear-gradient(135deg, var(--success) 0%, #05d68a 100%);
+            opacity: 0.7;
+        }
+
+        .upgrade-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .upgrade-desc {
+            font-size: 0.9rem;
+            color: var(--dark);
+            opacity: 0.8;
+            margin-bottom: 12px;
+        }
+
+        .upgrade-cost {
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: 3px solid var(--dark);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            z-index: 1000;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                transform: translateX(400px);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .message.success {
+            border-color: var(--success);
+            background: linear-gradient(135deg, var(--success) 0%, #05d68a 100%);
+            color: var(--dark);
+        }
+
+        .message.error {
+            border-color: var(--danger);
+            background: linear-gradient(135deg, var(--danger) 0%, #ff1f4d 100%);
+            color: white;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .game-over h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .restart-btn {
+            margin-top: 20px;
+            padding: 16px 40px;
+            background: var(--accent);
+            border: 3px solid var(--dark);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #05d68a;
+            transition: all 0.2s;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #05d68a;
+        }
+
+        /* Menu Screens */
+        .menu-screen {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .menu-screen h1 {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            animation: titleBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes titleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .menu-screen .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .menu-btn {
+            padding: 20px 40px;
+            background: var(--primary);
+            color: white;
+            border: 3px solid var(--dark);
+            border-radius: 16px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Fredoka', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #d45529;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0 #d45529;
+        }
+
+        .menu-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 0 #d45529;
+        }
+
+        .menu-btn.secondary {
+            background: var(--secondary);
+            color: var(--dark);
+            box-shadow: 0 6px 0 #e6b822;
+        }
+
+        .menu-btn.secondary:hover {
+            box-shadow: 0 10px 0 #e6b822;
+        }
+
+        .menu-btn.secondary:active {
+            box-shadow: 0 4px 0 #e6b822;
+        }
+
+        .menu-btn.accent {
+            background: var(--accent);
+            color: var(--dark);
+            box-shadow: 0 6px 0 #05d68a;
+        }
+
+        .menu-btn.accent:hover {
+            box-shadow: 0 10px 0 #05d68a;
+        }
+
+        .menu-btn.accent:active {
+            box-shadow: 0 4px 0 #05d68a;
+        }
+
+        .tutorial-content {
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .tutorial-step {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 3px solid var(--dark);
+            margin-bottom: 20px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .tutorial-step h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tutorial-step p {
+            line-height: 1.6;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        .tutorial-step ul {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: var(--dark);
+        }
+
+        .tutorial-step ul li {
+            margin-bottom: 8px;
+        }
+
+        .tutorial-tip {
+            background: linear-gradient(135deg, var(--accent) 0%, #05d68a 100%);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .credits-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .credits-section {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 3px solid var(--dark);
+            margin-bottom: 20px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .credits-section h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .credits-section p {
+            font-size: 1.1rem;
+            color: var(--dark);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .credits-emoji {
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .menu-screen h1 {
+                font-size: 2.5rem;
+            }
+
+            .menu-items {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-btn {
+                font-size: 1.1rem;
+                padding: 16px 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="game-container">
+        <!-- Main Menu -->
+        <div class="menu-screen" id="main-menu">
+            <h1>🍔 Burger Stall Tycoon</h1>
+            <div class="subtitle">Master the art of fast food economics!</div>
+            <div class="menu-buttons">
+                <button class="menu-btn" onclick="showGame()">
+                    <span>🎮</span> Start Game
+                </button>
+                <button class="menu-btn secondary" onclick="showTutorial()">
+                    <span>📚</span> How to Play
+                </button>
+                <button class="menu-btn accent" onclick="showCredits()">
+                    <span>⭐</span> Credits
+                </button>
+            </div>
+        </div>
+
+        <!-- Tutorial -->
+        <div class="menu-screen" id="tutorial" style="display: none;">
+            <h1>📚 How to Play</h1>
+            <div class="tutorial-content">
+                <div class="tutorial-step">
+                    <h3>🎯 Goal</h3>
+                    <p>Reach <strong>$1,000</strong> to win! Start with $150 and grow your stall day by day.</p>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>💰 Making Money</h3>
+                    <p><strong>The Basic Loop:</strong></p>
+                    <ul>
+                        <li><strong>Buy Ingredients</strong> - Stock up on buns, patties, potatoes, and oil</li>
+                        <li><strong>Set Prices</strong> - Adjust burger and fries prices to attract customers</li>
+                        <li><strong>Start Day</strong> - Watch customers arrive and decide whether to buy</li>
+                        <li><strong>Earn Profit</strong> - Keep what's left after ingredient costs</li>
+                    </ul>
+                    <div class="tutorial-tip">
+                        💡 Tip: Profit = Revenue - Costs. Price too high? Fewer sales. Price too low? Less profit!
+                    </div>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>🍔 Your Menu</h3>
+                    <p><strong>Burger</strong> - Costs $3 to make (1 bun + 1 patty)</p>
+                    <p><strong>Fries</strong> - Costs $1.50 to make (1 potato + 1 oil)</p>
+                    <div class="tutorial-tip">
+                        💡 Tip: You control the selling price. Experiment to find the sweet spot!
+                    </div>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>👥 Customers</h3>
+                    <p><strong>🧑‍🎓 Students</strong> - Have less money, prefer cheaper food</p>
+                    <p><strong>🧑‍💼 Workers</strong> - Have more money, willing to pay higher prices</p>
+                    <p>Each customer looks at your prices and decides whether to buy based on their budget!</p>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>⭐ Upgrades</h3>
+                    <p>Starting Day 4, you can buy upgrades to grow your business:</p>
+                    <ul>
+                        <li><strong>Better Grill</strong> - Serve more customers per day</li>
+                        <li><strong>Bigger Fryer</strong> - Even more capacity!</li>
+                        <li><strong>Signboard</strong> - Attract more customers</li>
+                        <li><strong>Bulk Supplier</strong> - Get cheaper ingredients</li>
+                    </ul>
+                    <div class="tutorial-tip">
+                        💡 Tip: Reinvesting profits is the key to growing fast!
+                    </div>
+                </div>
+
+                <div class="tutorial-step">
+                    <h3>⚠️ Watch Out!</h3>
+                    <p>If you run out of money and can't buy ingredients, it's game over. Manage your cash carefully!</p>
+                </div>
+            </div>
+            <div class="menu-buttons" style="margin-top: 30px;">
+                <button class="menu-btn" onclick="showMainMenu()">
+                    <span>←</span> Back to Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- Credits -->
+        <div class="menu-screen" id="credits" style="display: none;">
+            <h1>⭐ Credits</h1>
+            <div class="credits-content">
+                <div class="credits-emoji">🍔🍟🎮</div>
+
+                <div class="credits-section">
+                    <h3>A Game by</h3>
+                    <p>Phurin Duangsri (PooBear) 9</p>
+                    <p>Hariwong Lonarai (Make) 12</p>
+                </div>
+                
+                <div class="credits-section">
+                    <h3>Game Design</h3>
+                    <p>Burger Stall Tycoon</p>
+                    <p>A cozy economics simulation game</p>
+                </div>
+
+                <div class="credits-section">
+                    <h3>Concept</h3>
+                    <p>Teaching economics through gameplay</p>
+                    <p>Learn about pricing, costs, profit, and reinvestment</p>
+                    <p>without complex formulas or stress!</p>
+                </div>
+
+                <div class="credits-section">
+                    <h3>Built With</h3>
+                    <p>HTML5, CSS3, JavaScript</p>
+                    <p>Fonts: Fredoka & Outfit (Google Fonts)</p>
+                </div>
+
+                <div class="credits-section">
+                    <h3>Special Thanks</h3>
+                    <p>To all the real fast food entrepreneurs</p>
+                    <p>who inspired this game! 🙌</p>
+                </div>
+
+                <div class="credits-section">
+                    <p>This game is created by Claude Sonnet 4.5</p>
+                </div>
+
+                <div class="credits-emoji">💰📈🎯</div>
+            </div>
+            <div class="menu-buttons" style="margin-top: 30px;">
+                <button class="menu-btn" onclick="showMainMenu()">
+                    <span>←</span> Back to Menu
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" style="display: none;">
+            <h1>🍔 Burger Stall Tycoon</h1>
+            <div class="subtitle">Master the art of fast food economics!</div>
+
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-label">💰 Money</div>
+                    <div class="stat-value" id="money">$150</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">📅 Day</div>
+                    <div class="stat-value" id="day">1</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">🎯 Goal</div>
+                    <div class="stat-value">$1000</div>
+                </div>
+            </div>
+
+            <div id="report-container"></div>
+
+            <div class="section">
+                <div class="section-title">🍽️ Menu Prices</div>
+                <div class="menu-items">
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <div class="item-name">Burger</div>
+                            <div class="item-icon">🍔</div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">
+                            Cost: $3 (Bun + Patty)
+                        </div>
+                        <div class="price-control">
+                            <button class="price-btn" onclick="changePrice('burger', -1)">−</button>
+                            <div class="price-display" id="burger-price">$5</div>
+                            <button class="price-btn" onclick="changePrice('burger', 1)">+</button>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="item-header">
+                            <div class="item-name">Fries</div>
+                            <div class="item-icon">🍟</div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">
+                            Cost: $1.5 (Potato + Oil)
+                        </div>
+                        <div class="price-control">
+                            <button class="price-btn" onclick="changePrice('fries', -1)">−</button>
+                            <div class="price-display" id="fries-price">$3</div>
+                            <button class="price-btn" onclick="changePrice('fries', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📦 Ingredients</div>
+                <div class="ingredients-grid">
+                    <div class="ingredient">
+                        <div class="ingredient-name">🍞 Buns</div>
+                        <div class="ingredient-amount" id="buns-amount">10</div>
+                        <div class="ingredient-cost">$1 each</div>
+                        <button class="buy-btn" onclick="buyIngredient('buns', 5)">Buy 5 ($5)</button>
+                    </div>
+                    <div class="ingredient">
+                        <div class="ingredient-name">🥩 Patties</div>
+                        <div class="ingredient-amount" id="patties-amount">10</div>
+                        <div class="ingredient-cost">$2 each</div>
+                        <button class="buy-btn" onclick="buyIngredient('patties', 5)">Buy 5 ($10)</button>
+                    </div>
+                    <div class="ingredient">
+                        <div class="ingredient-name">🥔 Potatoes</div>
+                        <div class="ingredient-amount" id="potatoes-amount">10</div>
+                        <div class="ingredient-cost">$1 each</div>
+                        <button class="buy-btn" onclick="buyIngredient('potatoes', 5)">Buy 5 ($5)</button>
+                    </div>
+                    <div class="ingredient">
+                        <div class="ingredient-name">🛢️ Oil</div>
+                        <div class="ingredient-amount" id="oil-amount">10</div>
+                        <div class="ingredient-cost">$0.5 each</div>
+                        <button class="buy-btn" onclick="buyIngredient('oil', 10)">Buy 10 ($5)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">👥 Customer Queue</div>
+                <div class="customers" id="customers">
+                    <div style="color: #999; font-style: italic;">Ready when you are!</div>
+                </div>
+            </div>
+
+            <div class="section" id="upgrades-section" style="display: none;">
+                <div class="section-title">⭐ Upgrades</div>
+                <div class="upgrades-grid" id="upgrades"></div>
+            </div>
+
+            <button class="action-btn" id="start-day-btn" onclick="startDay()">
+                🚀 Start Day
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Navigation Functions
+        function showMainMenu() {
+            document.getElementById('main-menu').style.display = 'block';
+            document.getElementById('tutorial').style.display = 'none';
+            document.getElementById('credits').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'none';
+        }
+
+        function showTutorial() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('tutorial').style.display = 'block';
+            document.getElementById('credits').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'none';
+        }
+
+        function showCredits() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('tutorial').style.display = 'none';
+            document.getElementById('credits').style.display = 'block';
+            document.getElementById('game-screen').style.display = 'none';
+        }
+
+        function showGame() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('tutorial').style.display = 'none';
+            document.getElementById('credits').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            resetGame();
+        }
+
+        function resetGame() {
+            gameState.money = 150;
+            gameState.day = 1;
+            gameState.prices = { burger: 5, fries: 3 };
+            gameState.ingredients = { buns: 10, patties: 10, potatoes: 10, oil: 10 };
+            gameState.dayActive = false;
+            gameState.customers = [];
+            gameState.soldToday = { burger: 0, fries: 0 };
+            gameState.revenueToday = 0;
+            gameState.costsToday = 0;
+            gameState.upgrades = {
+                betterGrill: false,
+                biggerFryer: false,
+                signboard: false,
+                bulkSupplier: false
+            };
+            document.getElementById('report-container').innerHTML = '';
+            document.getElementById('upgrades-section').style.display = 'none';
+            document.getElementById('upgrades').innerHTML = '';
+            document.getElementById('start-day-btn').disabled = false;
+            document.getElementById('start-day-btn').textContent = '🚀 Start Day';
+            updateDisplay();
+        }
+
+        // Game State
+        const gameState = {
+            money: 150,
+            day: 1,
+            prices: { burger: 5, fries: 3 },
+            ingredients: { buns: 10, patties: 10, potatoes: 10, oil: 10 },
+            dayActive: false,
+            customers: [],
+            soldToday: { burger: 0, fries: 0 },
+            revenueToday: 0,
+            costsToday: 0,
+            upgrades: {
+                betterGrill: false,
+                biggerFryer: false,
+                signboard: false,
+                bulkSupplier: false
+            }
+        };
+
+        const upgradeData = {
+            betterGrill: { name: 'Better Grill', desc: 'Cook faster, +3 customers/day', cost: 100 },
+            biggerFryer: { name: 'Bigger Fryer', desc: '+5 max customers/day', cost: 80 },
+            signboard: { name: 'Signboard', desc: '+10% customer spending', cost: 60 },
+            bulkSupplier: { name: 'Bulk Supplier', desc: '20% cheaper ingredients', cost: 120 }
+        };
+
+        function updateDisplay() {
+            document.getElementById('money').textContent = `$${gameState.money}`;
+            document.getElementById('day').textContent = gameState.day;
+            document.getElementById('burger-price').textContent = `$${gameState.prices.burger}`;
+            document.getElementById('fries-price').textContent = `$${gameState.prices.fries}`;
+            
+            document.getElementById('buns-amount').textContent = gameState.ingredients.buns;
+            document.getElementById('patties-amount').textContent = gameState.ingredients.patties;
+            document.getElementById('potatoes-amount').textContent = gameState.ingredients.potatoes;
+            document.getElementById('oil-amount').textContent = gameState.ingredients.oil;
+
+            // Show upgrades section after day 3
+            if (gameState.day >= 4 && !document.getElementById('upgrades').hasChildNodes()) {
+                document.getElementById('upgrades-section').style.display = 'block';
+                renderUpgrades();
+            }
+        }
+
+        function changePrice(item, delta) {
+            gameState.prices[item] = Math.max(1, gameState.prices[item] + delta);
+            updateDisplay();
+        }
+
+        function buyIngredient(type, amount) {
+            const costs = { buns: 1, patties: 2, potatoes: 1, oil: 0.5 };
+            let cost = costs[type] * amount;
+
+            // Apply bulk supplier discount
+            if (gameState.upgrades.bulkSupplier) {
+                cost *= 0.8;
+            }
+
+            if (gameState.money >= cost) {
+                gameState.money -= cost;
+                gameState.ingredients[type] += amount;
+                updateDisplay();
+                showMessage(`Bought ${amount} ${type}!`, 'success');
+            } else {
+                showMessage('Not enough money!', 'error');
+            }
+        }
+
+        function showMessage(text, type = 'success') {
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.textContent = text;
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 2000);
+        }
+
+        function startDay() {
+            if (gameState.dayActive) return;
+
+            gameState.dayActive = true;
+            gameState.soldToday = { burger: 0, fries: 0 };
+            gameState.revenueToday = 0;
+            gameState.costsToday = 0;
+
+            document.getElementById('start-day-btn').disabled = true;
+            document.getElementById('start-day-btn').textContent = '⏳ Day in Progress...';
+
+            // Generate customers
+            let baseCustomers = Math.floor(5 + gameState.day * 1.5);
+            if (gameState.upgrades.betterGrill) baseCustomers += 3;
+            if (gameState.upgrades.biggerFryer) baseCustomers += 5;
+
+            gameState.customers = generateCustomers(baseCustomers);
+            renderCustomers();
+
+            // Process customers one by one
+            processCustomers();
+        }
+
+        function generateCustomers(count) {
+            const customers = [];
+            for (let i = 0; i < count; i++) {
+                const type = Math.random() < 0.5 ? 'student' : 'worker';
+                customers.push({
+                    type,
+                    budget: type === 'student' ? 5 : 10,
+                    emoji: type === 'student' ? '🧑‍🎓' : '🧑‍💼'
+                });
+            }
+            return customers;
+        }
+
+        function renderCustomers() {
+            const container = document.getElementById('customers');
+            container.innerHTML = gameState.customers.map(c => 
+                `<div class="customer">${c.emoji}</div>`
+            ).join('');
+        }
+
+        function processCustomers() {
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index >= gameState.customers.length) {
+                    clearInterval(interval);
+                    endDay();
+                    return;
+                }
+
+                const customer = gameState.customers[index];
+                attemptSale(customer);
+                
+                // Remove customer from display
+                const customerElements = document.querySelectorAll('.customer');
+                if (customerElements[index]) {
+                    customerElements[index].style.opacity = '0.3';
+                }
+
+                index++;
+            }, 800);
+        }
+
+        function attemptSale(customer) {
+            const burgerChance = calculateBuyChance(customer, 'burger');
+            const friesChance = calculateBuyChance(customer, 'fries');
+
+            let bought = false;
+
+            // Try to buy burger
+            if (Math.random() < burgerChance && canMake('burger')) {
+                makeSale('burger');
+                bought = true;
+            }
+
+            // Try to buy fries
+            if (Math.random() < friesChance && canMake('fries')) {
+                makeSale('fries');
+                bought = true;
+            }
+        }
+
+        function calculateBuyChance(customer, item) {
+            const price = gameState.prices[item];
+            const budget = customer.budget;
+
+            // Base chance depends on price vs budget
+            let chance = Math.max(0, Math.min(1, 1 - (price - budget / 2) / budget));
+
+            // Students more price-sensitive
+            if (customer.type === 'student') {
+                chance *= 0.8;
+            }
+
+            // Signboard upgrade increases chance
+            if (gameState.upgrades.signboard) {
+                chance *= 1.1;
+            }
+
+            return Math.min(0.9, chance);
+        }
+
+        function canMake(item) {
+            if (item === 'burger') {
+                return gameState.ingredients.buns > 0 && gameState.ingredients.patties > 0;
+            } else {
+                return gameState.ingredients.potatoes > 0 && gameState.ingredients.oil > 0;
+            }
+        }
+
+        function makeSale(item) {
+            if (item === 'burger') {
+                gameState.ingredients.buns--;
+                gameState.ingredients.patties--;
+                gameState.costsToday += 3;
+            } else {
+                gameState.ingredients.potatoes--;
+                gameState.ingredients.oil--;
+                gameState.costsToday += 1.5;
+            }
+
+            gameState.soldToday[item]++;
+            gameState.revenueToday += gameState.prices[item];
+            updateDisplay();
+        }
+
+        function endDay() {
+            gameState.dayActive = false;
+            
+            const profit = gameState.revenueToday - gameState.costsToday;
+            gameState.money += profit;
+
+            showDayReport(profit);
+
+            gameState.day++;
+            updateDisplay();
+
+            document.getElementById('start-day-btn').disabled = false;
+            document.getElementById('start-day-btn').textContent = '🚀 Start Next Day';
+
+            // Check win/lose conditions
+            if (gameState.money >= 1000) {
+                showWin();
+            } else if (gameState.money <= 0 && !canAffordAnything()) {
+                showGameOver();
+            }
+        }
+
+        function showDayReport(profit) {
+            const report = document.createElement('div');
+            report.className = 'day-report';
+            report.innerHTML = `
+                <div class="report-title">📊 Day ${gameState.day} Report</div>
+                <div class="report-line">
+                    <span>🍔 Burgers Sold:</span>
+                    <span>${gameState.soldToday.burger}</span>
+                </div>
+                <div class="report-line">
+                    <span>🍟 Fries Sold:</span>
+                    <span>${gameState.soldToday.fries}</span>
+                </div>
+                <div class="report-line">
+                    <span>💵 Revenue:</span>
+                    <span>$${gameState.revenueToday.toFixed(2)}</span>
+                </div>
+                <div class="report-line">
+                    <span>📦 Costs:</span>
+                    <span>-$${gameState.costsToday.toFixed(2)}</span>
+                </div>
+                <div class="report-line total" style="color: ${profit >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                    <span>${profit >= 0 ? '📈' : '📉'} Profit:</span>
+                    <span>${profit >= 0 ? '+' : ''}$${profit.toFixed(2)}</span>
+                </div>
+            `;
+
+            const container = document.getElementById('report-container');
+            container.innerHTML = '';
+            container.appendChild(report);
+        }
+
+        function canAffordAnything() {
+            return gameState.money >= 0.5;
+        }
+
+        function renderUpgrades() {
+            const container = document.getElementById('upgrades');
+            container.innerHTML = Object.keys(upgradeData).map(key => {
+                const upgrade = upgradeData[key];
+                const owned = gameState.upgrades[key];
+                return `
+                    <div class="upgrade-card ${owned ? 'owned' : ''}" onclick="${owned ? '' : `buyUpgrade('${key}')`}">
+                        <div class="upgrade-name">${owned ? '✅ ' : ''}${upgrade.name}</div>
+                        <div class="upgrade-desc">${upgrade.desc}</div>
+                        <div class="upgrade-cost">${owned ? 'Owned' : '$' + upgrade.cost}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buyUpgrade(key) {
+            const upgrade = upgradeData[key];
+            if (gameState.money >= upgrade.cost && !gameState.upgrades[key]) {
+                gameState.money -= upgrade.cost;
+                gameState.upgrades[key] = true;
+                updateDisplay();
+                renderUpgrades();
+                showMessage(`Purchased ${upgrade.name}!`, 'success');
+            } else if (gameState.upgrades[key]) {
+                showMessage('Already owned!', 'error');
+            } else {
+                showMessage('Not enough money!', 'error');
+            }
+        }
+
+        function showWin() {
+            const gameScreen = document.getElementById('game-screen');
+            gameScreen.innerHTML = `
+                <div class="game-over">
+                    <h2>🎉 Congratulations!</h2>
+                    <p style="font-size: 1.3rem; margin: 20px 0;">You've reached $1000 and become a Burger Tycoon!</p>
+                    <p style="font-size: 1.1rem; color: var(--dark); opacity: 0.8;">Final day: ${gameState.day}</p>
+                    <div style="display: flex; gap: 16px; justify-content: center; margin-top: 30px;">
+                        <button class="restart-btn" onclick="showGame()">🔄 Play Again</button>
+                        <button class="restart-btn" style="background: var(--secondary); box-shadow: 0 6px 0 #e6b822;" onclick="showMainMenu()">🏠 Main Menu</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showGameOver() {
+            const gameScreen = document.getElementById('game-screen');
+            gameScreen.innerHTML = `
+                <div class="game-over">
+                    <h2>💸 Game Over</h2>
+                    <p style="font-size: 1.3rem; margin: 20px 0;">You ran out of money!</p>
+                    <p style="font-size: 1.1rem; color: var(--dark); opacity: 0.8;">You lasted ${gameState.day} days</p>
+                    <div style="display: flex; gap: 16px; justify-content: center; margin-top: 30px;">
+                        <button class="restart-btn" onclick="showGame()">🔄 Try Again</button>
+                        <button class="restart-btn" style="background: var(--secondary); box-shadow: 0 6px 0 #e6b822;" onclick="showMainMenu()">🏠 Main Menu</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize
+        updateDisplay();
+    </script>
+</body>
+</html>
