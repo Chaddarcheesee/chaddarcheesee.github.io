@@ -18,10 +18,10 @@ window.App = {
 
   projects: [
     {
-      title: "ESP32 Block IDE",
-      description: "A web-based visual programming tool for ESP32 microcontrollers.",
+      title: "Burger Stall Tycoon",
+      description: "A Web game developed with Vanilla JS and HTML5 Canvas. (This game is for school project only)",
       image: "https://via.placeholder.com/800x450",
-      link: "#",
+      link: "./burgerstalltycoon.html",
     },
     {
       title: "Smart Train System",
