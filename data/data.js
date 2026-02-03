@@ -2,7 +2,7 @@
 window.App = {
   name: "ChaddarCheese",
   tagline: "Embedded Developer | Maker",
-  profilePic: "https://via.placeholder.com/120",
+  profilePic: "https://www.nakorn.ac.th/mis/schoolmin/gallery/student/35666.JPG",
   about:
     "I'm a developer passionate about hardware-integrated systems. I specialize in ESP32, STM32, and automation tools.",
   email: "lhariwong@gmail.com",
