@@ -791,9 +791,9 @@
                 <div class="credits-emoji">🍔🍟🎮</div>
 
                 <div class="credits-section">
-                    <h3>A Game by</h3>
-                    <p>Phurin Duangsri (PooBear) 9</p>
+                    <h3>A game by</h3>
                     <p>Hariwong Lonarai (Make) 12</p>
+                    <p>Phurin Duangsri (Poobear) 9</p>
                 </div>
                 
                 <div class="credits-section">
@@ -816,13 +816,7 @@
                 </div>
 
                 <div class="credits-section">
-                    <h3>Special Thanks</h3>
-                    <p>To all the real fast food entrepreneurs</p>
-                    <p>who inspired this game! 🙌</p>
-                </div>
-
-                <div class="credits-section">
-                    <p>This game is created by Claude Sonnet 4.5</p>
+                    <p>This game was developed by Claude Sonnet 4.5</p>
                 </div>
 
                 <div class="credits-emoji">💰📈🎯</div>
@@ -1212,11 +1206,22 @@
             document.getElementById('start-day-btn').disabled = false;
             document.getElementById('start-day-btn').textContent = '🚀 Start Next Day';
 
+            // Auto-scroll to the report
+            setTimeout(() => {
+                const reportContainer = document.getElementById('report-container');
+                if (reportContainer && reportContainer.firstChild) {
+                    reportContainer.firstChild.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+            }, 300);
+
             // Check win/lose conditions
             if (gameState.money >= 1000) {
-                showWin();
+                setTimeout(() => showWin(), 1000);
             } else if (gameState.money <= 0 && !canAffordAnything()) {
-                showGameOver();
+                setTimeout(() => showGameOver(), 1000);
             }
         }
 
